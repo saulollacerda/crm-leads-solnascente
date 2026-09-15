@@ -61,3 +61,18 @@ Deploy do app no Vercel. `DATABASE_URL` nas env vars do Vercel apontando para o 
 - TypeScript estrito, App Router, `src/` como raiz do código-fonte, alias `@/*`.
 - Tailwind para toda a estilização — evitar CSS solto/módulos CSS paralelos.
 - Migrations do Prisma são a única forma de alterar o schema do banco (nunca alterar tabelas manualmente em produção).
+
+## TDD (Test-Driven Development)
+
+Todo o sistema é desenvolvido seguindo TDD, para garantir confiabilidade em um projeto com prazo curto e baixa margem para regressões.
+
+- Ciclo **red-green-refactor**: escrever o teste que falha antes da implementação, implementar o mínimo para o teste passar, depois refatorar com os testes verdes.
+- Nenhuma funcionalidade nova (rota de API, componente, validação, regra de negócio) é implementada sem um teste que a cubra escrito antes ou junto.
+- Bugs corrigidos ganham um teste de regressão antes do fix, reproduzindo o problema.
+- Stack de testes:
+  - **Vitest** para testes unitários e de integração (lógica de validação, camada de dados via Prisma, handlers de API).
+  - **Testing Library** (`@testing-library/react`) para componentes React quando houver lógica não-trivial de UI.
+  - **Playwright** para testes end-to-end dos fluxos críticos (formulário público de captação, login admin, atualização de status de lead).
+  - Testes de API/integração rodam contra o Postgres do Docker Compose local, nunca contra produção/Supabase.
+- Organização: arquivos de teste colocados junto ao código (`*.test.ts`/`*.test.tsx`) ou em `tests/` para E2E.
+- CI (quando configurado) deve rodar a suíte completa antes de qualquer merge/deploy.

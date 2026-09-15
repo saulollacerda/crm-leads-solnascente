@@ -26,15 +26,30 @@ enum StatusLead {
   Perdido
 }
 
+enum CanalContato {
+  WhatsApp
+  Telefone
+  Email
+}
+
 model Lead {
-  id              String     @id @default(uuid())
+  id              String       @id @default(uuid())
   nome            String
   whatsapp        String
   modeloInteresse String
   unidade         Unidade
-  status          StatusLead @default(Novo)
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
+  canalPreferido  CanalContato @default(WhatsApp)
+  status          StatusLead   @default(Novo)
 
+  // Consentimento LGPD: sem autorização o dado não é gravado, então ambos são obrigatórios.
+  consentimentoEm      DateTime
+  consentimentoVersao  String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([unidade])
+  @@index([createdAt])
   @@map("leads")
 }

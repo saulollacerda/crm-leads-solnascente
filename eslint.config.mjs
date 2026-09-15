@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Referência de design e client gerado pelo Prisma: não são código nosso.
+    "design_handoff_crm_leads/**",
+    "src/generated/**",
   ]),
 ]);
 

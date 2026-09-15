@@ -24,9 +24,14 @@ yarn-debug.log*
 yarn-error.log*
 
 # misc
+*.tsbuildinfo
 .DS_Store
 *.pem
 .vscode/
 .idea/
 
 /src/generated/prisma
+
+# insumos de trabalho (não fazem parte da entrega)
+design_handoff_crm_leads/
+docs/adr/
