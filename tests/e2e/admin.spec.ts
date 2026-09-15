@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { nomeUnico } from "./nomes";
 
 const USUARIO = process.env.ADMIN_USERNAME ?? "admin";
 const SENHA = process.env.ADMIN_PASSWORD ?? "changeme";
@@ -40,7 +41,7 @@ test("credencial errada não entra", async ({ page }) => {
 });
 
 test("o lead captado aparece no painel", async ({ page }) => {
-  const nome = `E2E painel ${Date.now()}`;
+  const nome = nomeUnico("Painel");
   await criarLead(page, nome, "Teresina");
   await entrar(page);
 
@@ -48,7 +49,7 @@ test("o lead captado aparece no painel", async ({ page }) => {
 });
 
 test("avança o status pelo fluxo até Convertido", async ({ page }) => {
-  const nome = `E2E status ${Date.now()}`;
+  const nome = nomeUnico("Status");
   await criarLead(page, nome, "Teresina");
   await entrar(page);
 
@@ -66,7 +67,7 @@ test("avança o status pelo fluxo até Convertido", async ({ page }) => {
 });
 
 test("filtrar por unidade muda a URL e a lista", async ({ page }) => {
-  const nome = `E2E filtro ${Date.now()}`;
+  const nome = nomeUnico("Filtro");
   await criarLead(page, nome, "Timon");
   await entrar(page);
 

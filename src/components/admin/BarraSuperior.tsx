@@ -3,7 +3,13 @@
 import { useRouter } from "next/navigation";
 import { Logo } from "@/components/ui/Logo";
 
-export function BarraSuperior({ usuario }: { usuario: string }) {
+export function BarraSuperior({
+  usuario,
+  logo,
+}: {
+  usuario: string;
+  logo: string | null;
+}) {
   const router = useRouter();
 
   async function sair() {
@@ -15,7 +21,7 @@ export function BarraSuperior({ usuario }: { usuario: string }) {
   return (
     <header className="flex h-14 shrink-0 items-center justify-between bg-text px-4 sm:px-6">
       <div className="flex items-center gap-4">
-        <Logo escuro />
+        <Logo src={logo} escuro />
         <span className="hidden h-5 w-px bg-neutral-700 sm:block" />
         <span className="hidden text-[13px] text-neutral-400 sm:block">
           CRM de leads

@@ -10,8 +10,23 @@ export type CanalContato = (typeof CANAIS)[number];
 
 const MSG_WHATSAPP = "Número incompleto — use DDD + 9 dígitos.";
 
+// Letras de qualquer alfabeto mais o que aparece em nome próprio: espaço,
+// apóstrofo e hífen. `\p{L}` cobre acentuação sem listar caractere por caractere.
+const SO_LETRAS = /^\p{L}[\p{L}'’.-]*(?: [\p{L}'’.-]+)*$/u;
+
+/** Nome e sobrenome: quem vai ligar para o lead precisa saber por quem chamar. */
+function temNomeESobrenome(nome: string): boolean {
+  return nome.split(" ").filter((parte) => parte.length >= 2).length >= 2;
+}
+
 export const novoLeadSchema = z.object({
-  nome: z.string().trim().min(1, "Informe seu nome."),
+  nome: z
+    .string()
+    .transform((valor) => valor.trim().replace(/\s+/g, " "))
+    .refine((nome) => nome.length > 0, "Informe seu nome.")
+    .refine((nome) => nome.length <= 80, "Nome muito longo.")
+    .refine((nome) => SO_LETRAS.test(nome), "Use apenas letras no nome.")
+    .refine(temNomeESobrenome, "Informe nome e sobrenome."),
 
   whatsapp: z
     .string()

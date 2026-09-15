@@ -34,6 +34,48 @@ describe("novoLeadSchema", () => {
   });
 });
 
+describe("nome", () => {
+  const nomeDe = (nome: string) => novoLeadSchema.parse({ ...valido, nome }).nome;
+
+  it.each([
+    "Ricardo Menezes",
+    "José da Silva",
+    "Ana Sá",
+    "Maria D'Ávila",
+    "Luís Antônio Gonçalves Júnior",
+  ])("aceita %s", (nome) => {
+    expect(nomeDe(nome)).toBe(nome);
+  });
+
+  it("normaliza espaços sobrando", () => {
+    expect(nomeDe("  Ricardo   Menezes  ")).toBe("Ricardo Menezes");
+  });
+
+  it.each([
+    ["vazio", "", "Informe seu nome."],
+    ["só espaços", "   ", "Informe seu nome."],
+    ["um nome só", "Ricardo", "Informe nome e sobrenome."],
+    ["inicial no lugar do sobrenome", "Ricardo M", "Informe nome e sobrenome."],
+    ["com número", "Ricardo 2 Menezes", "Use apenas letras no nome."],
+    ["com e-mail", "ricardo@teste.com", "Use apenas letras no nome."],
+    ["só símbolos", "!!! ???", "Use apenas letras no nome."],
+    ["com tags", "<script>alert(1)</script>", "Use apenas letras no nome."],
+  ])("recusa %s", (_caso, nome, mensagem) => {
+    expect(erros_de({ ...valido, nome }).nome).toBe(mensagem);
+  });
+
+  it("recusa nome absurdamente longo", () => {
+    expect(erros_de({ ...valido, nome: "Ricardo ".repeat(20) }).nome).toBe(
+      "Nome muito longo.",
+    );
+  });
+
+  it("guarda o nome normalizado, não o que veio do formulário", () => {
+    const resultado = novoLeadSchema.parse({ ...valido, nome: " Ana  Sá " });
+    expect(resultado.nome).toBe("Ana Sá");
+  });
+});
+
 describe("erros por campo", () => {
   it("cobra o nome com a mensagem do design", () => {
     const erros = erros_de({ ...valido, nome: "  " });

@@ -5,6 +5,7 @@ import { Filtros } from "@/components/admin/Filtros";
 import { MenuLateral } from "@/components/admin/MenuLateral";
 import { PainelLeads } from "@/components/admin/PainelLeads";
 import { COOKIE_SESSAO, verificarSessao } from "@/lib/auth/sessao";
+import { logoOficial } from "@/lib/marca";
 import { contarLeads, listarLeads } from "@/lib/leads/repositorio";
 import { UNIDADES, type Unidade } from "@/lib/leads/schema";
 import { ehStatusLead, type StatusLead } from "@/lib/leads/status";
@@ -35,7 +36,7 @@ export default async function PaginaPainel({
 
   return (
     <div className="flex min-h-dvh flex-col">
-      <BarraSuperior usuario={sessao?.usuario ?? "admin"} />
+      <BarraSuperior usuario={sessao?.usuario ?? "admin"} logo={logoOficial(true)} />
 
       <div className="flex flex-1 flex-col lg:flex-row">
         <MenuLateral quantidadeDeLeads={total} />

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { FormularioLogin } from "@/components/admin/FormularioLogin";
 import { Logo } from "@/components/ui/Logo";
+import { logoOficial } from "@/lib/marca";
 
 export const metadata: Metadata = {
   title: "Entrar — Painel Sol Nascente",
@@ -19,7 +20,7 @@ export default async function PaginaLogin({
   return (
     <div className="relative flex min-h-dvh items-center justify-center px-4 py-20">
       <div className="absolute left-4 top-8 sm:left-14 sm:top-14">
-        <Logo />
+        <Logo src={logoOficial(false)} />
       </div>
 
       <FormularioLogin destino={destino} />

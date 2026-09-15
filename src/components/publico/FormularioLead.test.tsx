@@ -116,6 +116,34 @@ describe("validação no cliente", () => {
     expect(fetch).not.toHaveBeenCalled();
   });
 
+  it("cobra nome e sobrenome", async () => {
+    const user = userEvent.setup();
+    montar();
+
+    await user.type(screen.getByLabelText("Nome"), "Ricardo");
+    await user.click(screen.getByRole("button", { name: /quero falar/i }));
+
+    expect(
+      await screen.findByText("Informe nome e sobrenome."),
+    ).toBeInTheDocument();
+  });
+
+  it("some com o erro do campo assim que a pessoa corrige", async () => {
+    const user = userEvent.setup();
+    montar();
+
+    await user.click(screen.getByRole("button", { name: /quero falar/i }));
+    expect(await screen.findByText("Informe seu nome.")).toBeInTheDocument();
+
+    await user.type(screen.getByLabelText("Nome"), "R");
+
+    expect(screen.queryByText("Informe seu nome.")).not.toBeInTheDocument();
+    // O erro do WhatsApp, que ninguém tocou, continua visível.
+    expect(
+      screen.getByText("Número incompleto — use DDD + 9 dígitos."),
+    ).toBeInTheDocument();
+  });
+
   it("aplica a máscara do WhatsApp enquanto a pessoa digita", async () => {
     const user = userEvent.setup();
     montar();

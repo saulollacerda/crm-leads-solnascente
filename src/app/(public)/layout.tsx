@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/ui/Logo";
+import { logoOficial } from "@/lib/marca";
 
 export default function LayoutPublico({
   children,
@@ -10,7 +11,7 @@ export default function LayoutPublico({
     <>
       <header className="flex h-14 items-center justify-between border-b border-text px-4 sm:h-[72px] sm:px-10">
         <Link href="/" className="flex items-center">
-          <Logo />
+          <Logo src={logoOficial(false)} />
         </Link>
 
         <nav className="hidden items-center gap-6 text-[13px] text-neutral-800 sm:flex">

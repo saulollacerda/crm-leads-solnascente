@@ -1,6 +1,5 @@
 import { expect, test } from "@playwright/test";
-
-const nomeUnico = () => `Teste E2E ${Date.now()}`;
+import { nomeUnico } from "./nomes";
 
 test("a raiz leva para o modelo em destaque", async ({ page }) => {
   await page.goto("/");
@@ -49,7 +48,7 @@ test("o formulário cobra os campos antes de enviar", async ({ page }) => {
 test("registra o interesse e devolve o protocolo", async ({ page }) => {
   await page.goto("/modelos/cg-160-fan");
 
-  await page.getByLabel("Nome").fill(nomeUnico());
+  await page.getByLabel("Nome").fill(nomeUnico("Captacao"));
   await page.getByLabel("WhatsApp").fill("86998124471");
   await page.getByRole("button", { name: "Timon" }).click();
   await page.getByRole("checkbox").check();

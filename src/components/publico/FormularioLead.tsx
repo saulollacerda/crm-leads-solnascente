@@ -61,6 +61,20 @@ export function FormularioLead({
 
   const enviando = estado === "loading";
 
+  /**
+   * Some com o erro do campo assim que a pessoa mexe nele. Sem isso, a
+   * mensagem fica na tela contradizendo o que já foi corrigido, até o
+   * próximo envio.
+   */
+  function limparErro(campo: keyof ErrosDeCampo) {
+    setErros((atuais) => {
+      if (!atuais[campo]) return atuais;
+      const resto = { ...atuais };
+      delete resto[campo];
+      return resto;
+    });
+  }
+
   async function enviar(evento: React.FormEvent) {
     evento.preventDefault();
     if (enviando) return;
@@ -153,7 +167,10 @@ export function FormularioLead({
         <Input
           id={`${id}-nome`}
           value={nome}
-          onChange={(e) => setNome(e.target.value)}
+          onChange={(e) => {
+            setNome(e.target.value);
+            limparErro("nome");
+          }}
           placeholder="Seu nome completo"
           erro={!!erros.nome}
           readOnly={enviando}
@@ -169,7 +186,10 @@ export function FormularioLead({
         <Input
           id={`${id}-whatsapp`}
           value={whatsapp}
-          onChange={(e) => setWhatsapp(formatarWhatsapp(e.target.value))}
+          onChange={(e) => {
+            setWhatsapp(formatarWhatsapp(e.target.value));
+            limparErro("whatsapp");
+          }}
           placeholder="(86) 90000-0000"
           erro={!!erros.whatsapp}
           readOnly={enviando}
@@ -244,7 +264,10 @@ export function FormularioLead({
           <input
             type="checkbox"
             checked={consentimento}
-            onChange={(e) => setConsentimento(e.target.checked)}
+            onChange={(e) => {
+              setConsentimento(e.target.checked);
+              limparErro("consentimento");
+            }}
             disabled={enviando}
             className="mt-0.5 size-[18px] shrink-0 accent-accent"
           />
