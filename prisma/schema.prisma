@@ -11,7 +11,14 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+
+  // Conexão da aplicação. Em produção aponta para o pooler do Supabase:
+  // cada função serverless abre a própria conexão e o Postgres tem limite.
+  url = env("DATABASE_URL")
+
+  // Migrations precisam de conexão direta — o pooler em modo transação não
+  // suporta os comandos de DDL que o migrate usa. Em dev, as duas são iguais.
+  directUrl = env("DIRECT_URL")
 }
 
 enum Unidade {

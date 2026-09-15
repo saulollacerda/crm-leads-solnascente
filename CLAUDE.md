@@ -65,16 +65,30 @@ DATABASE_URL="postgresql://postgres:postgres@localhost:5432/crm_leads?schema=tes
 
 ## Produção
 
-Deploy do app no Vercel. `DATABASE_URL` nas env vars do Vercel apontando para o Postgres do Supabase. Ao aplicar migrations em produção: `npx prisma migrate deploy`.
+Deploy do app no Vercel, Postgres no Supabase.
+
+O Supabase expõe duas connection strings, e as duas são necessárias:
+
+- **Pooler** (porta 6543, modo transação) → `DATABASE_URL`. É o que a aplicação usa: cada função serverless abre a própria conexão e o Postgres tem limite.
+- **Direta** (porta 5432) → `DIRECT_URL`. Só as migrations usam, porque o pooler em modo transação não aceita os comandos de DDL do `migrate`.
+
+Aplicar migrations em produção é passo explícito, não parte do build:
+
+```bash
+DATABASE_URL="<direta>" DIRECT_URL="<direta>" npx prisma migrate deploy
+```
+
+O `build` roda `prisma generate` antes do `next build`. Isso é obrigatório e não redundante: o client é gerado em `src/generated/prisma`, que não é versionado, e o `postinstall` do Prisma não roda quando a Vercel restaura `node_modules` do cache.
 
 ## Variáveis de ambiente
 
 | Variável         | Uso                                                        |
 |------------------|-------------------------------------------------------------|
-| `DATABASE_URL`   | Connection string do Postgres (container em dev, Supabase em prod) |
+| `DATABASE_URL`   | Postgres da aplicação (container em dev, pooler do Supabase em prod) |
+| `DIRECT_URL`     | Conexão direta, usada só pelas migrations (em dev, igual à de cima) |
 | `ADMIN_USERNAME` | Usuário do painel admin                                     |
 | `ADMIN_PASSWORD` | Senha do painel admin                                       |
-| `SESSION_SECRET` | Segredo para assinar o cookie de sessão do admin             |
+| `SESSION_SECRET` | Segredo para assinar o cookie de sessão do admin. Em produção, gerar um novo — nunca reaproveitar o do `.env` local |
 
 ## Convenções
 
