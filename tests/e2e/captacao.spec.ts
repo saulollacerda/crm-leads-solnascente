@@ -10,7 +10,11 @@ test("a raiz leva para o modelo em destaque", async ({ page }) => {
 test("trocar de modelo navega e atualiza o formulário", async ({ page }) => {
   await page.goto("/modelos/cg-160-fan");
 
-  await page.getByRole("link", { name: /Biz 125/ }).click();
+  // O nome também aparece no rodapé; aqui interessa o card da faixa.
+  await page
+    .getByRole("region", { name: "Outros modelos" })
+    .getByRole("link", { name: /Biz 125/ })
+    .click();
 
   await expect(page).toHaveURL("/modelos/biz-125");
   await expect(page.getByLabel("Modelo de interesse")).toHaveValue("Biz 125");

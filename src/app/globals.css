@@ -50,3 +50,22 @@
 @utility grayscale-foto {
   filter: grayscale(1) contrast(1.08);
 }
+
+/* Régua fina de verdade. Em tela retina, 1px de CSS vira 2 pixels físicos, e
+   o Chrome arredonda `border-width: .5px` de volta para 1px — box-shadow, não.
+   Daí a régua ser sombra, e não borda. */
+@utility regua-fina-topo {
+  box-shadow: inset 0 1px 0 var(--color-accent);
+
+  @media (min-resolution: 2dppx) {
+    box-shadow: inset 0 0.5px 0 var(--color-accent);
+  }
+}
+
+@utility regua-fina-base {
+  box-shadow: inset 0 -1px 0 var(--color-accent);
+
+  @media (min-resolution: 2dppx) {
+    box-shadow: inset 0 -0.5px 0 var(--color-accent);
+  }
+}
