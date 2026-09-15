@@ -29,6 +29,7 @@ yarn-error.log*
 *.pem
 .vscode/
 .idea/
+.env
 
 /src/generated/prisma
 
