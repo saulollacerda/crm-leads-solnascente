@@ -9,7 +9,7 @@ export default function LayoutPublico({
 }) {
   return (
     <>
-      <header className="flex h-14 items-center justify-center border-b border-regua px-4 sm:h-[72px] sm:px-10">
+      <header className="flex h-14 items-center justify-center border-b border-accent px-4 sm:h-[72px] sm:px-10">
         <Link href="/" className="flex items-center">
           <Logo src={logoOficial(false)} />
         </Link>
