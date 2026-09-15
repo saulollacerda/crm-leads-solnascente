@@ -9,4 +9,6 @@ COPY . .
 
 EXPOSE 3000
 
-CMD ["npm", "run", "dev"]
+# O client do Prisma é gerado a cada start: o engine é específico do sistema,
+# e o que existe no host (macOS/Windows) não roda no container (linux).
+CMD ["sh", "-c", "npx prisma generate && npm run dev"]

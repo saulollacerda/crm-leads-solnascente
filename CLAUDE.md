@@ -60,8 +60,12 @@ npm run test:e2e  # fluxos ponta a ponta (Playwright)
 Os testes de integração usam o schema `test` do mesmo Postgres — isolado dos dados de desenvolvimento. Ao criar uma migration, aplicá-la lá também:
 
 ```bash
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/crm_leads?schema=test" npx prisma migrate deploy
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/crm_leads?schema=test" \
+DIRECT_URL="postgresql://postgres:postgres@localhost:5432/crm_leads?schema=test" \
+npx prisma migrate deploy
 ```
+
+As duas variáveis são necessárias: o `migrate` usa a `DIRECT_URL`, então sobrescrever só a `DATABASE_URL` aplicaria a migration no schema `public` de novo.
 
 ## Produção
 

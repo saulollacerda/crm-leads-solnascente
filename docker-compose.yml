@@ -16,6 +16,8 @@ services:
       - .:/app
       - /app/node_modules
       - /app/.next
+      # Fora do bind mount: o client gerado no host traz o engine de outro sistema.
+      - /app/src/generated
 
   db:
     image: postgres:16-alpine

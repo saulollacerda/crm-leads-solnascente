@@ -45,7 +45,10 @@ model Lead {
   // Número que o cliente recebe e usa como referência no atendimento.
   // Gerado por sequência do Postgres: único por construção, e vale para
   // qualquer origem de escrita, não só a API.
-  protocolo String @unique @default(dbgenerated("('SN-' || to_char(now(), 'YYYY') || '-' || lpad(nextval('protocolo_seq')::text, 4, '0'))"))
+  // A expressão está na forma normalizada do Postgres — é assim que ele a devolve
+  // na introspecção. Escrita de outro jeito, o `migrate dev` acusa drift a cada
+  // execução e pede uma migration nova que não muda nada.
+  protocolo String @unique @default(dbgenerated("((('SN-'::text || to_char(now(), 'YYYY'::text)) || '-'::text) || lpad((nextval('protocolo_seq'::regclass))::text, 4, '0'::text))"))
 
   nome            String
   whatsapp        String
