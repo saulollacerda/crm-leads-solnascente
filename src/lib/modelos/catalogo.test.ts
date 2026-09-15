@@ -22,8 +22,6 @@ describe("listarModelos", () => {
       });
       expect(modelo.preco).toBeGreaterThan(0);
       expect(modelo.parcela48x).toBeGreaterThan(0);
-      // O caminho da foto é servido de `public/`, então precisa ser absoluto.
-      expect(modelo.foto).toMatch(/^\/motos\/.+\.(jpg|jpeg|png|webp)$/);
     }
   });
 

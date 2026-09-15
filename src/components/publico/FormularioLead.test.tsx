@@ -4,13 +4,14 @@ import userEvent from "@testing-library/user-event";
 import { buscarModelo, listarModelos } from "@/lib/modelos/catalogo";
 import { FormularioLead } from "./FormularioLead";
 
-const modelo = buscarModelo("cg-160-fan")!;
+const modelo = { ...buscarModelo("cg-160-fan")!, foto: "/motos/cg-160-fan.jpg" };
+const modelos = listarModelos().map((m) => ({ ...m, foto: null }));
 
 function montar(onTrocarModelo = vi.fn()) {
   return render(
     <FormularioLead
       modelo={modelo}
-      modelos={listarModelos()}
+      modelos={modelos}
       onTrocarModelo={onTrocarModelo}
     />,
   );

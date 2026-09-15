@@ -3,7 +3,7 @@
 import { useId, useState } from "react";
 import Link from "next/link";
 import { formatarWhatsapp } from "@/lib/formato";
-import type { Modelo } from "@/lib/modelos/catalogo";
+import type { ModeloComFoto } from "@/lib/modelos/fotos";
 import {
   CANAIS,
   UNIDADES,
@@ -42,8 +42,8 @@ export function FormularioLead({
   modelos,
   onTrocarModelo,
 }: {
-  modelo: Modelo;
-  modelos: readonly Modelo[];
+  modelo: ModeloComFoto;
+  modelos: readonly ModeloComFoto[];
   /** Trocar o modelo aqui atualiza a vitrine ao lado — o estado é do pai. */
   onTrocarModelo: (nome: string) => void;
 }) {

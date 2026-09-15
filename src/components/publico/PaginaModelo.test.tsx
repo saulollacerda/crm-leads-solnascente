@@ -1,12 +1,15 @@
 import { describe, expect, it } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { buscarModelo, listarModelos } from "@/lib/modelos/catalogo";
+import { listarModelos } from "@/lib/modelos/catalogo";
 import { PaginaModelo } from "./PaginaModelo";
+
+// A foto é resolvida no servidor; aqui entram já resolvidas.
+const modelos = listarModelos().map((m) => ({ ...m, foto: `/motos/${m.slug}.jpg` }));
 
 function montar(slug = "cg-160-fan") {
   return render(
-    <PaginaModelo modelo={buscarModelo(slug)!} modelos={listarModelos()} />,
+    <PaginaModelo modelo={modelos.find((m) => m.slug === slug)!} modelos={modelos} />,
   );
 }
 

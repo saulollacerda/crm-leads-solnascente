@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { formatarMoeda } from "@/lib/formato";
-import type { Modelo } from "@/lib/modelos/catalogo";
+import type { ModeloComFoto } from "@/lib/modelos/fotos";
 
 export function OutrosModelos({
   modelos,
   className = "",
 }: {
-  modelos: readonly Modelo[];
+  modelos: readonly ModeloComFoto[];
   className?: string;
 }) {
   return (

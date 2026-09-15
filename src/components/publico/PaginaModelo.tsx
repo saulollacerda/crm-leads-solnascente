@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { Modelo } from "@/lib/modelos/catalogo";
+import type { ModeloComFoto } from "@/lib/modelos/fotos";
 import { FormularioLead } from "./FormularioLead";
 import { OutrosModelos } from "./OutrosModelos";
 import { VitrineModelo } from "./VitrineModelo";
@@ -16,8 +16,8 @@ export function PaginaModelo({
   modelo: modeloInicial,
   modelos,
 }: {
-  modelo: Modelo;
-  modelos: readonly Modelo[];
+  modelo: ModeloComFoto;
+  modelos: readonly ModeloComFoto[];
 }) {
   const [modelo, setModelo] = useState(modeloInicial);
 

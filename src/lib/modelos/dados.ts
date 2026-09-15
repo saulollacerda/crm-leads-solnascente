@@ -5,8 +5,6 @@ export type Modelo = {
   preco: number;
   parcela48x: number;
   motor: string;
-  /** Caminho em `public/`. Trocar aqui se o arquivo tiver outra extensão. */
-  foto: string;
 };
 
 /**
@@ -21,7 +19,6 @@ export const MODELOS: readonly Modelo[] = [
     preco: 19994,
     parcela48x: 446.9,
     motor: "162,7 cc",
-    foto: "/motos/cg-160-fan.jpg",
   },
   {
     slug: "cg-160-titan",
@@ -30,7 +27,6 @@ export const MODELOS: readonly Modelo[] = [
     preco: 22390,
     parcela48x: 498.2,
     motor: "162,7 cc",
-    foto: "/motos/cg-160-titan.jpg",
   },
   {
     slug: "biz-125",
@@ -39,7 +35,6 @@ export const MODELOS: readonly Modelo[] = [
     preco: 17390,
     parcela48x: 389.4,
     motor: "124,9 cc",
-    foto: "/motos/biz-125.jpg",
   },
   {
     slug: "pop-110i",
@@ -48,7 +43,6 @@ export const MODELOS: readonly Modelo[] = [
     preco: 13590,
     parcela48x: 302.1,
     motor: "109,1 cc",
-    foto: "/motos/pop-110i.jpg",
   },
   {
     slug: "nxr-160-bros",
@@ -57,7 +51,6 @@ export const MODELOS: readonly Modelo[] = [
     preco: 24790,
     parcela48x: 552.7,
     motor: "162,7 cc",
-    foto: "/motos/nxr-160-bros.jpg",
   },
   {
     slug: "xre-300-sahara",
@@ -66,7 +59,6 @@ export const MODELOS: readonly Modelo[] = [
     preco: 31890,
     parcela48x: 708.3,
     motor: "291,6 cc",
-    foto: "/motos/xre-300-sahara.jpg",
   },
   {
     slug: "cb-300f-twister",
@@ -75,7 +67,6 @@ export const MODELOS: readonly Modelo[] = [
     preco: 27390,
     parcela48x: 610.5,
     motor: "293,5 cc",
-    foto: "/motos/cb-300f-twister.jpg",
   },
   {
     slug: "elite-125",
@@ -84,6 +75,5 @@ export const MODELOS: readonly Modelo[] = [
     preco: 16290,
     parcela48x: 364.8,
     motor: "125 cc",
-    foto: "/motos/elite-125.jpg",
   },
 ];

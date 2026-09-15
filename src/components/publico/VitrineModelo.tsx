@@ -1,12 +1,12 @@
 import { formatarMoeda } from "@/lib/formato";
-import type { Modelo } from "@/lib/modelos/catalogo";
+import type { ModeloComFoto } from "@/lib/modelos/fotos";
 import { FotoModelo } from "./FotoModelo";
 
 export function VitrineModelo({
   modelo,
   className = "",
 }: {
-  modelo: Modelo;
+  modelo: ModeloComFoto;
   className?: string;
 }) {
   return (

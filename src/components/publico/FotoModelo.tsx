@@ -2,21 +2,22 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import type { Modelo } from "@/lib/modelos/catalogo";
+import type { ModeloComFoto } from "@/lib/modelos/fotos";
 
 /**
- * Enquanto o arquivo de `modelo.foto` não existir em `public/`, o bloco mostra
- * o mesmo espaço reservado com o tratamento visual do design. Basta soltar a
- * imagem na pasta para ela aparecer, sem mudar código.
+ * Enquanto não houver arquivo para o modelo em `public/motos`, o bloco mostra
+ * o espaço reservado com o tratamento visual do design. Basta soltar a imagem
+ * na pasta para ela aparecer, sem mudar código.
  */
 export function FotoModelo({
   modelo,
   altura,
 }: {
-  modelo: Modelo;
+  modelo: ModeloComFoto;
   altura: string;
 }) {
-  const [semArquivo, setSemArquivo] = useState(false);
+  const [falhou, setFalhou] = useState(false);
+  const semArquivo = !modelo.foto || falhou;
 
   return (
     <div
@@ -28,13 +29,13 @@ export function FotoModelo({
         </span>
       ) : (
         <Image
-          src={modelo.foto}
+          src={modelo.foto!}
           alt={`Honda ${modelo.nome}`}
           fill
           priority
           sizes="(max-width: 1024px) 100vw, 60vw"
           className="object-contain p-4 sm:p-6"
-          onError={() => setSemArquivo(true)}
+          onError={() => setFalhou(true)}
         />
       )}
     </div>

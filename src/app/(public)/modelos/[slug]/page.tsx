@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PaginaModelo } from "@/components/publico/PaginaModelo";
 import { buscarModelo, listarModelos } from "@/lib/modelos/catalogo";
+import { comFoto, comFotos } from "@/lib/modelos/fotos";
 
 export function generateStaticParams() {
   return listarModelos().map((modelo) => ({ slug: modelo.slug }));
@@ -29,5 +30,7 @@ export default async function Pagina({
   const modelo = buscarModelo((await params).slug);
   if (!modelo) notFound();
 
-  return <PaginaModelo modelo={modelo} modelos={listarModelos()} />;
+  return (
+    <PaginaModelo modelo={comFoto(modelo)} modelos={comFotos(listarModelos())} />
+  );
 }
