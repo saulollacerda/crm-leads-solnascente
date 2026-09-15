@@ -5,6 +5,9 @@ services:
       - "3000:3000"
     env_file:
       - .env
+    environment:
+      # Dentro da rede do Compose o Postgres atende por `db`, não por localhost.
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/crm_leads?schema=public
     depends_on:
       db:
         condition: service_healthy

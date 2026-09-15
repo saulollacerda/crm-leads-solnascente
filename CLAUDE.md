@@ -31,7 +31,9 @@ Model `Lead` (ver `prisma/schema.prisma`): `id` (uuid), `nome`, `whatsapp`, `mod
 
 ## Autenticação do admin
 
-Login simples: credenciais fixas via env vars (`ADMIN_USERNAME`, `ADMIN_PASSWORD`), sem tabela de usuários. Sessão via cookie **httpOnly** assinado (JWT com `SESSION_SECRET`). Middleware protege tudo em `/admin/*` exceto `/admin/login`, e as rotas de API de listagem/atualização de status.
+Login simples: credenciais fixas via env vars (`ADMIN_USERNAME`, `ADMIN_PASSWORD`), sem tabela de usuários. Sessão via cookie **httpOnly** assinado (JWT com `SESSION_SECRET`, via `jose` — roda no edge).
+
+Duas guardas, uma por superfície: o middleware protege as páginas de `/admin/*` (exceto `/admin/login`) com redirect para o login; as rotas de API verificam a sessão no próprio handler e respondem `401` em JSON. A API não depende do matcher do middleware continuar correto.
 
 ## Desenvolvimento local
 
@@ -40,8 +42,22 @@ cp .env.example .env
 docker compose up --build
 ```
 
-- App em `http://localhost:3000`, Postgres também exposto em `localhost:5432` (para inspeção com um client externo).
-- Primeira vez (ou após alterar `schema.prisma`): `docker compose exec app npx prisma migrate dev`. Roda dentro do container `app` porque `DATABASE_URL` usa o hostname interno `db` da rede do Compose.
+- App em `http://localhost:3000`, Postgres exposto em `localhost:5432`.
+- O `DATABASE_URL` do `.env` aponta para `localhost`, então `prisma` e os testes rodam direto na máquina. O container `app` recebe o hostname interno `db` por override no `docker-compose.yml`.
+- Primeira vez (ou após alterar `schema.prisma`): `npx prisma migrate dev`.
+
+### Testes
+
+```bash
+npm test          # unidade + integração (Vitest)
+npm run test:e2e  # fluxos ponta a ponta (Playwright)
+```
+
+Os testes de integração usam o schema `test` do mesmo Postgres — isolado dos dados de desenvolvimento. Ao criar uma migration, aplicá-la lá também:
+
+```bash
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/crm_leads?schema=test" npx prisma migrate deploy
+```
 
 ## Produção
 
