@@ -35,3 +35,7 @@ yarn-error.log*
 # insumos de trabalho (não fazem parte da entrega)
 design_handoff_crm_leads/
 docs/adr/
+
+# Playwright
+/test-results/
+/playwright-report/

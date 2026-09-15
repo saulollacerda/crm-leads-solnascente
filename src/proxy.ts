@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { COOKIE_SESSAO, verificarSessao } from "@/lib/auth/sessao";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith("/admin/login")) {
     return NextResponse.next();
   }
@@ -18,6 +18,7 @@ export async function middleware(request: NextRequest) {
 
 // Só as páginas do painel: a API se protege nos próprios handlers, porque lá
 // a resposta correta é 401 em JSON, não um redirect para tela de login.
+// (`proxy.ts` é o nome novo do antigo `middleware.ts` a partir do Next 16.)
 export const config = {
   matcher: ["/admin/:path*"],
 };
