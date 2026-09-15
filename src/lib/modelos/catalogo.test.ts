@@ -48,7 +48,9 @@ describe("buscarModelo", () => {
 });
 
 describe("modeloDestaque", () => {
-  it("é a CG 160 Fan, o único com preço confirmado pela concessionária", () => {
+  // Nenhum preço do catálogo é confirmado (ver o aviso em dados.ts): o destaque
+  // é o primeiro do catálogo, não o modelo com valor oficial.
+  it("é a CG 160 Fan, o primeiro do catálogo", () => {
     expect(modeloDestaque().slug).toBe("cg-160-fan");
   });
 });
