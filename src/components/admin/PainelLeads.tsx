@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { MicroLabel } from "@/components/ui/campos";
+import { MicroLabel, Spinner } from "@/components/ui/campos";
 import { TagStatus } from "@/components/ui/TagStatus";
 import { formatarDataHora, formatarWhatsapp } from "@/lib/formato";
 import type { Lead } from "@/lib/leads/repositorio";
@@ -35,7 +35,7 @@ export function PainelLeads({
   const [selecionadoId, setSelecionadoId] = useState<string | null>(null);
   const [statusLocal, setStatusLocal] = useState<Record<string, StatusLead>>({});
   const [erro, setErro] = useState<string | null>(null);
-  const [salvando, setSalvando] = useState(false);
+  const [salvandoPara, setSalvandoPara] = useState<StatusLead | null>(null);
 
   const statusDe = (lead: Lead) => statusLocal[lead.id] ?? lead.status;
   const selecionado = leads.find((lead) => lead.id === selecionadoId) ?? null;
@@ -43,7 +43,7 @@ export function PainelLeads({
   async function avancar(lead: Lead, novoStatus: StatusLead) {
     const anterior = statusDe(lead);
 
-    setSalvando(true);
+    setSalvandoPara(novoStatus);
     setErro(null);
     setStatusLocal((atual) => ({ ...atual, [lead.id]: novoStatus }));
 
@@ -65,7 +65,7 @@ export function PainelLeads({
       setStatusLocal((atual) => ({ ...atual, [lead.id]: anterior }));
       setErro("Não foi possível atualizar o status deste lead.");
     } finally {
-      setSalvando(false);
+      setSalvandoPara(null);
     }
   }
 
@@ -149,7 +149,7 @@ export function PainelLeads({
             lead={selecionado}
             status={statusDe(selecionado)}
             erro={erro}
-            salvando={salvando}
+            salvandoPara={salvandoPara}
             onAvancar={(novo) => avancar(selecionado, novo)}
           />
         )}
@@ -162,13 +162,13 @@ function Detalhe({
   lead,
   status,
   erro,
-  salvando,
+  salvandoPara,
   onAvancar,
 }: {
   lead: Lead;
   status: StatusLead;
   erro: string | null;
-  salvando: boolean;
+  salvandoPara: StatusLead | null;
   onAvancar: (novo: StatusLead) => void;
 }) {
   const proximos = transicoesDe(status);
@@ -212,7 +212,17 @@ function Detalhe({
       </dl>
 
       <div className="flex flex-col gap-3">
-        <MicroLabel>Avançar status</MicroLabel>
+        <div className="flex items-center gap-2">
+          <MicroLabel>Avançar status</MicroLabel>
+          {/* A mudança de status é otimista: o botão clicado some no mesmo
+              instante. O aviso de gravação fica aqui, que não se move. */}
+          {salvandoPara && (
+            <span className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-neutral-600">
+              <Spinner claro={false} />
+              Salvando
+            </span>
+          )}
+        </div>
 
         {erro && (
           <p role="alert" className="text-[13px] text-accent-700">
@@ -220,20 +230,24 @@ function Detalhe({
           </p>
         )}
 
-        {proximos.map((destino, indice) => (
-          <button
-            key={destino}
-            onClick={() => onAvancar(destino)}
-            disabled={salvando}
-            className={`flex h-12 w-full items-center rounded-[4px] px-[18px] text-left text-[13px] font-extrabold uppercase tracking-[0.04em] transition-colors disabled:opacity-45 ${
-              destino === "Perdido" || indice > 0
-                ? "border border-neutral-400 bg-white text-neutral-700 hover:bg-accent-100"
-                : "bg-accent text-bg hover:bg-accent-600"
-            }`}
-          >
-            {labelDaTransicao(destino)}
-          </button>
-        ))}
+        {proximos.map((destino, indice) => {
+          const secundario = destino === "Perdido" || indice > 0;
+
+          return (
+            <button
+              key={destino}
+              onClick={() => onAvancar(destino)}
+              disabled={salvandoPara !== null}
+              className={`flex h-12 w-full items-center gap-2.5 rounded-[4px] px-[18px] text-left text-[13px] font-extrabold uppercase tracking-[0.04em] transition-colors disabled:opacity-45 ${
+                secundario
+                  ? "border border-neutral-400 bg-white text-neutral-700 hover:bg-accent-100"
+                  : "bg-accent text-bg hover:bg-accent-600"
+              }`}
+            >
+              {labelDaTransicao(destino)}
+            </button>
+          );
+        })}
 
         <p className="text-[12px] leading-relaxed text-neutral-700">
           {dicaDoStatus(status)}

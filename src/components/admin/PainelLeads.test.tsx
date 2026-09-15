@@ -155,6 +155,32 @@ describe("avanço de status", () => {
     ).toBeInTheDocument();
   });
 
+  // A mudança é otimista, então o botão clicado some no mesmo instante — o
+  // aviso de gravação precisa ficar num ponto que não se move.
+  it("avisa que está salvando enquanto o servidor não responde", async () => {
+    vi.mocked(fetch).mockReturnValue(new Promise(() => {}));
+    const user = await selecionar("Novo");
+
+    await user.click(screen.getByRole("button", { name: "Marcar como Em contato" }));
+
+    expect(await screen.findByText("Salvando")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Marcar como Convertido" }),
+    ).toBeDisabled();
+  });
+
+  it("tira o aviso quando o salvamento termina", async () => {
+    vi.mocked(fetch).mockReturnValue(respostaOk(lead({ status: "EmContato" })));
+    const user = await selecionar("Novo");
+
+    await user.click(screen.getByRole("button", { name: "Marcar como Em contato" }));
+
+    expect(
+      await screen.findByRole("button", { name: "Marcar como Convertido" }),
+    ).toBeEnabled();
+    expect(screen.queryByText("Salvando")).not.toBeInTheDocument();
+  });
+
   it("desfaz a mudança otimista quando o servidor recusa", async () => {
     vi.mocked(fetch).mockResolvedValue({
       ok: false,

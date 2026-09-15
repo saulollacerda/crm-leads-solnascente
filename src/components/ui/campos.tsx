@@ -140,11 +140,14 @@ export function BotaoSecundario({
   );
 }
 
-export function Spinner() {
+/** `claro` para girar sobre fundo escuro (botão primário, barra do admin). */
+export function Spinner({ claro = true }: { claro?: boolean }) {
   return (
     <span
       aria-hidden
-      className="inline-block size-4 animate-spin rounded-full border-2 border-bg border-t-transparent"
+      className={`inline-block size-4 shrink-0 animate-spin rounded-full border-2 border-t-transparent ${
+        claro ? "border-bg" : "border-neutral-700"
+      }`}
     />
   );
 }

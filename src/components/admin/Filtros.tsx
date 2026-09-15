@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { MicroLabel } from "@/components/ui/campos";
+import { LinkFiltro } from "./LinkFiltro";
 import { STATUS_LEAD, rotuloDoStatus } from "@/lib/leads/status";
 import { UNIDADES } from "@/lib/leads/schema";
 
@@ -31,22 +31,16 @@ function Grupo({
     <div className="flex items-center gap-2.5">
       <MicroLabel>{rotulo}</MicroLabel>
       <div className="flex h-[34px] overflow-hidden rounded-[4px] border border-neutral-300">
-        {opcoes.map((opcao, indice) => {
-          const ativo = (filtros[chave] ?? undefined) === opcao.valor;
-
-          return (
-            <Link
-              key={opcao.texto}
-              href={href(filtros, chave, opcao.valor)}
-              aria-current={ativo ? "true" : undefined}
-              className={`flex items-center px-3 text-[12px] font-semibold transition-colors ${
-                indice > 0 ? "border-l border-neutral-300" : ""
-              } ${ativo ? "bg-text text-bg" : "bg-white hover:bg-accent-100"}`}
-            >
-              {opcao.texto}
-            </Link>
-          );
-        })}
+        {opcoes.map((opcao, indice) => (
+          <LinkFiltro
+            key={opcao.texto}
+            href={href(filtros, chave, opcao.valor)}
+            ativo={(filtros[chave] ?? undefined) === opcao.valor}
+            primeiro={indice === 0}
+          >
+            {opcao.texto}
+          </LinkFiltro>
+        ))}
       </div>
     </div>
   );

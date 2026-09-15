@@ -1,7 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Logo } from "@/components/ui/Logo";
+import { Spinner } from "@/components/ui/campos";
 
 export function BarraSuperior({
   usuario,
@@ -11,11 +13,22 @@ export function BarraSuperior({
   logo: string | null;
 }) {
   const router = useRouter();
+  const [saindo, setSaindo] = useState(false);
 
   async function sair() {
-    await fetch("/api/auth/session", { method: "DELETE" });
-    router.replace("/admin/login");
-    router.refresh();
+    if (saindo) return;
+
+    // Não volta a `false` no caminho feliz: a navegação encerra a página, e
+    // reabilitar o botão só daria chance de um segundo clique inútil.
+    setSaindo(true);
+
+    try {
+      await fetch("/api/auth/session", { method: "DELETE" });
+      router.replace("/admin/login");
+      router.refresh();
+    } catch {
+      setSaindo(false);
+    }
   }
 
   return (
@@ -34,9 +47,11 @@ export function BarraSuperior({
         </span>
         <button
           onClick={sair}
-          className="rounded-[4px] border border-neutral-600 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-bg transition-colors hover:bg-neutral-800"
+          disabled={saindo}
+          className="flex items-center gap-2 rounded-[4px] border border-neutral-600 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-bg transition-colors hover:bg-neutral-800 disabled:opacity-50"
         >
-          Sair
+          {saindo && <Spinner />}
+          {saindo ? "Saindo" : "Sair"}
         </button>
       </div>
     </header>
