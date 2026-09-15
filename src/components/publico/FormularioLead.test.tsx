@@ -6,8 +6,14 @@ import { FormularioLead } from "./FormularioLead";
 
 const modelo = buscarModelo("cg-160-fan")!;
 
-function montar() {
-  return render(<FormularioLead modelo={modelo} modelos={listarModelos()} />);
+function montar(onTrocarModelo = vi.fn()) {
+  return render(
+    <FormularioLead
+      modelo={modelo}
+      modelos={listarModelos()}
+      onTrocarModelo={onTrocarModelo}
+    />,
+  );
 }
 
 async function preencherValido(user: ReturnType<typeof userEvent.setup>) {
@@ -46,6 +52,16 @@ describe("estado inicial", () => {
   it("já vem com o modelo da página selecionado", () => {
     montar();
     expect(screen.getByLabelText("Modelo de interesse")).toHaveValue("CG 160 Fan");
+  });
+
+  it("avisa o pai quando o modelo muda, para a vitrine acompanhar", async () => {
+    const user = userEvent.setup();
+    const onTrocarModelo = vi.fn();
+    montar(onTrocarModelo);
+
+    await user.selectOptions(screen.getByLabelText("Modelo de interesse"), "Biz 125");
+
+    expect(onTrocarModelo).toHaveBeenCalledWith("Biz 125");
   });
 
   it("assume Teresina e WhatsApp como padrão", () => {

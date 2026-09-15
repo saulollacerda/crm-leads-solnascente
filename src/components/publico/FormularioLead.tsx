@@ -40,14 +40,16 @@ type Estado = "idle" | "loading" | "success" | "error";
 export function FormularioLead({
   modelo,
   modelos,
+  onTrocarModelo,
 }: {
   modelo: Modelo;
   modelos: readonly Modelo[];
+  /** Trocar o modelo aqui atualiza a vitrine ao lado — o estado é do pai. */
+  onTrocarModelo: (nome: string) => void;
 }) {
   const id = useId();
   const [nome, setNome] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
-  const [modeloInteresse, setModeloInteresse] = useState(modelo.nome);
   const [unidade, setUnidade] = useState<Unidade>("Teresina");
   const [canalPreferido, setCanalPreferido] = useState<CanalContato>("WhatsApp");
   const [consentimento, setConsentimento] = useState(false);
@@ -66,7 +68,7 @@ export function FormularioLead({
     const payload = {
       nome,
       whatsapp,
-      modeloInteresse,
+      modeloInteresse: modelo.nome,
       unidade,
       canalPreferido,
       consentimento,
@@ -114,7 +116,7 @@ export function FormularioLead({
       <Confirmacao
         protocolo={protocolo}
         unidade={unidade}
-        modelo={modeloInteresse}
+        modelo={modelo.nome}
         canal={ROTULO_CANAL[canalPreferido]}
       />
     );
@@ -187,8 +189,8 @@ export function FormularioLead({
         </Label>
         <Select
           id={`${id}-modelo`}
-          value={modeloInteresse}
-          onChange={(e) => setModeloInteresse(e.target.value)}
+          value={modelo.nome}
+          onChange={(e) => onTrocarModelo(e.target.value)}
           erro={!!erros.modeloInteresse}
           disabled={enviando}
         >

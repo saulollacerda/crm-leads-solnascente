@@ -17,6 +17,26 @@ test("trocar de modelo navega e atualiza o formulário", async ({ page }) => {
   await expect(page.getByLabel("Modelo de interesse")).toHaveValue("Biz 125");
 });
 
+test("escolher outro modelo no formulário troca a moto em destaque", async ({
+  page,
+}) => {
+  await page.goto("/modelos/cg-160-fan");
+
+  await page.getByLabel("Nome").fill("Ricardo Menezes");
+  await page.getByLabel("Modelo de interesse").selectOption("XRE 300 Sahara");
+
+  await expect(
+    page.getByRole("heading", { name: "XRE 300 Sahara" }),
+  ).toBeVisible();
+  await expect(page.getByText("R$ 31.890,00")).toBeVisible();
+  await expect(page.getByText("291,6 cc")).toBeVisible();
+  // A foto em si é coberta no teste de componente: aqui ela depende de um
+  // arquivo em `public/motos`, que pode não estar presente.
+
+  // Trocar a moto não pode custar o que a pessoa já digitou.
+  await expect(page.getByLabel("Nome")).toHaveValue("Ricardo Menezes");
+});
+
 test("o formulário cobra os campos antes de enviar", async ({ page }) => {
   await page.goto("/modelos/cg-160-fan");
 

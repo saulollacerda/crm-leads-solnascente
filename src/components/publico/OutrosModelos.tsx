@@ -10,9 +10,15 @@ export function OutrosModelos({
   className?: string;
 }) {
   return (
-    <section className={`flex flex-col gap-3 px-4 py-6 sm:px-10 sm:pb-10 ${className}`}>
+    <section
+      aria-labelledby="outros-modelos"
+      className={`flex flex-col gap-3 px-4 py-6 sm:px-10 sm:pb-10 ${className}`}
+    >
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="text-[11px] font-semibold uppercase tracking-[0.1em]">
+        <h2
+          id="outros-modelos"
+          className="text-[11px] font-semibold uppercase tracking-[0.1em]"
+        >
           Outros modelos
         </h2>
         <p className="text-[11px] text-neutral-700">
