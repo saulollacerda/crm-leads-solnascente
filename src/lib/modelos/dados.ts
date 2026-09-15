@@ -8,8 +8,12 @@ export type Modelo = {
 };
 
 /**
- * Preços e parcelas são fictícios, com exceção da CG 160 Fan (R$ 19.994,00),
- * que veio do formulário da concessionária. Confirmar antes de publicar.
+ * ATENÇÃO: todos os preços e parcelas abaixo são ILUSTRATIVOS.
+ *
+ * Nenhum valor foi confirmado pela concessionária e nenhum deles constitui
+ * oferta comercial. Servem apenas para dar corpo à demonstração, enquanto o
+ * catálogo não vem do estoque real (ver docs/adr/0012). Antes de qualquer uso
+ * com público de verdade, os valores precisam ser substituídos pelos oficiais.
  */
 export const MODELOS: readonly Modelo[] = [
   {

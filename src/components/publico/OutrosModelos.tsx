@@ -26,7 +26,7 @@ export function OutrosModelos({
         </p>
       </div>
 
-      <ul className="grid border-t border-text sm:grid-cols-3 sm:border-b sm:border-text">
+      <ul className="grid border-t border-regua sm:grid-cols-3 sm:border-b sm:border-regua">
         {modelos.map((modelo) => (
           <li
             key={modelo.slug}

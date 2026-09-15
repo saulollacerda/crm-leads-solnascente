@@ -4,6 +4,12 @@ Mini CRM de captação e gestão de leads para a Sol Nascente Motos (concession�
 
 > 🚧 Em desenvolvimento — teste técnico de recrutamento.
 
+> ⚠️ **Os preços e parcelas exibidos são ilustrativos.** Nenhum valor foi
+> confirmado pela concessionária e nenhum constitui oferta comercial: existem
+> apenas para dar corpo à demonstração, enquanto o catálogo de modelos não vem
+> do estoque real. O mesmo vale para o catálogo em si — os modelos listados não
+> refletem disponibilidade.
+
 ## Rodar localmente
 
 ```bash

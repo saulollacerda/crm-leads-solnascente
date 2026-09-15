@@ -22,7 +22,7 @@ export function VitrineModelo({
 
       <FotoModelo modelo={modelo} altura="h-[210px] sm:h-[340px]" />
 
-      <dl className="grid grid-cols-2 border-y border-text sm:grid-cols-3">
+      <dl className="grid grid-cols-2 border-y border-regua sm:grid-cols-3">
         <Especificacao rotulo="Valor à vista" rotuloMobile="À vista">
           {formatarMoeda(modelo.preco)}
         </Especificacao>

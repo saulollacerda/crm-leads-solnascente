@@ -14,6 +14,11 @@
   --color-accent-700: #ae1800;
   --color-accent-800: #7c1405;
 
+  /* Réguas estruturais (faixas, colunas, molduras). O design as definia em
+     #201e1d, mas quase-preto a 1px pesa demais sobre o fundo claro. Fica
+     acima do divisor interno (neutral-300) para manter a hierarquia. */
+  --color-regua: #bab6b6;
+
   --color-neutral-300: #d7d3d3;
   --color-neutral-400: #bab6b6;
   --color-neutral-500: #9b9797;

@@ -32,7 +32,7 @@ export function PaginaModelo({
     <div className="grid lg:grid-cols-[1fr_480px] lg:grid-rows-[auto_1fr]">
       <VitrineModelo modelo={modelo} className="lg:col-start-1 lg:row-start-1" />
 
-      <div className="border-t border-text bg-white px-4 py-6 sm:px-10 sm:py-10 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:border-l lg:border-t-0">
+      <div className="border-t border-regua bg-white px-4 py-6 sm:px-10 sm:py-10 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:border-l lg:border-t-0">
         <FormularioLead
           modelo={modelo}
           modelos={modelos}

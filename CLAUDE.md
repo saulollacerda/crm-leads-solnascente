@@ -25,6 +25,10 @@ prisma/schema.prisma   # modelo Lead
 
 Admin fica em `/admin` (path-based), não em subdomínio — não há domínio próprio configurado para o projeto.
 
+## Catálogo de modelos
+
+Os modelos ficam em `src/lib/modelos/dados.ts`, acessados só pelo contrato de leitura em `catalogo.ts`. **Preços e parcelas são ilustrativos** — nenhum valor foi confirmado pela concessionária e nenhum constitui oferta comercial. Trocar por valores oficiais é pré-requisito de qualquer uso com público real; a fonte definitiva será o estoque da empresa.
+
 ## Modelo de dados
 
 Model `Lead` (ver `prisma/schema.prisma`): `id` (uuid), `nome`, `whatsapp`, `modeloInteresse`, `unidade` (enum `Teresina` | `Timon`), `status` (enum `Novo` | `EmContato` | `Convertido` | `Perdido`, default `Novo`), `createdAt`, `updatedAt`.

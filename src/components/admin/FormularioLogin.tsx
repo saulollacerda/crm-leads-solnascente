@@ -51,7 +51,7 @@ export function FormularioLogin({ destino }: { destino: string }) {
     <form
       onSubmit={entrar}
       noValidate
-      className="w-full max-w-[440px] border border-text bg-white p-10"
+      className="w-full max-w-[440px] border border-regua bg-white p-10"
     >
       <MicroLabel className="text-accent">Painel interno</MicroLabel>
 
