@@ -33,7 +33,13 @@ enum CanalContato {
 }
 
 model Lead {
-  id              String       @id @default(uuid())
+  id String @id @default(uuid())
+
+  // Número que o cliente recebe e usa como referência no atendimento.
+  // Gerado por sequência do Postgres: único por construção, e vale para
+  // qualquer origem de escrita, não só a API.
+  protocolo String @unique @default(dbgenerated("('SN-' || to_char(now(), 'YYYY') || '-' || lpad(nextval('protocolo_seq')::text, 4, '0'))"))
+
   nome            String
   whatsapp        String
   modeloInteresse String

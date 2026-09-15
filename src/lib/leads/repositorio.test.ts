@@ -42,6 +42,25 @@ describe("criarLead", () => {
     expect((await criarLead(base)).status).toBe("Novo");
   });
 
+  it("ganha um protocolo no formato que o cliente recebe", async () => {
+    expect((await criarLead(base)).protocolo).toMatch(/^SN-\d{4}-\d{4}$/);
+  });
+
+  it("não repete protocolo entre leads", async () => {
+    const protocolos = await Promise.all(
+      Array.from({ length: 5 }, () => criarLead(base).then((l) => l.protocolo)),
+    );
+
+    expect(new Set(protocolos).size).toBe(5);
+  });
+
+  it("mantém o protocolo ao avançar o status", async () => {
+    const lead = await criarLead(base);
+    const depois = await atualizarStatus(lead.id, "EmContato");
+
+    expect(depois.protocolo).toBe(lead.protocolo);
+  });
+
   it("registra quando e sob qual versão o consentimento foi dado", async () => {
     const lead = await criarLead(base);
     const gravado = await prisma.lead.findUniqueOrThrow({ where: { id: lead.id } });

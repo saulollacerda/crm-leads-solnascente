@@ -6,6 +6,8 @@ export const VERSAO_CONSENTIMENTO = "2026-09-15";
 
 export type Lead = {
   id: string;
+  /** Gerado pela sequência do banco na criação (ver migration). */
+  protocolo: string;
   nome: string;
   whatsapp: string;
   modeloInteresse: string;

@@ -289,8 +289,9 @@ function Confirmacao({
   modelo: string;
   canal: string;
 }) {
+  // `overflow-hidden` no card é o que faz a faixa vermelha respeitar o raio.
   return (
-    <div className="flex flex-col gap-6">
+    <div className="overflow-hidden rounded-[4px] border border-neutral-300 bg-white">
       <div className="bg-accent px-6 py-7 text-bg">
         <MicroLabel className="text-bg/70">Estou interessado</MicroLabel>
         <h2 className="mt-2 text-[30px] font-extrabold leading-[1.05] tracking-[-0.02em]">
@@ -298,34 +299,37 @@ function Confirmacao({
         </h2>
       </div>
 
-      <p className="text-sm leading-relaxed text-neutral-800">
-        Recebemos seu contato. Um especialista da unidade <strong>{unidade}</strong>{" "}
-        fala com você pelo WhatsApp em até 1 dia útil.
-      </p>
+      <div className="flex flex-col gap-6 p-6">
+        <p className="text-sm leading-relaxed text-neutral-800">
+          Recebemos seu contato. Um especialista da unidade{" "}
+          <strong>{unidade}</strong> fala com você pelo WhatsApp em até 1 dia
+          útil.
+        </p>
 
-      <dl className="border-y border-neutral-300">
-        {[
-          ["Protocolo", `#${protocolo}`],
-          ["Modelo", modelo],
-          ["Contato por", canal],
-        ].map(([rotulo, valor], indice) => (
-          <div
-            key={rotulo}
-            className={`flex items-center justify-between py-3.5 ${
-              indice > 0 ? "border-t border-neutral-300" : ""
-            }`}
-          >
-            <dt className="text-[11px] font-semibold uppercase tracking-[0.08em] text-neutral-600">
-              {rotulo}
-            </dt>
-            <dd className="text-sm font-bold">{valor}</dd>
-          </div>
-        ))}
-      </dl>
+        <dl className="border-y border-neutral-300">
+          {[
+            ["Protocolo", `#${protocolo}`],
+            ["Modelo", modelo],
+            ["Contato por", canal],
+          ].map(([rotulo, valor], indice) => (
+            <div
+              key={rotulo}
+              className={`flex items-center justify-between gap-4 py-3.5 ${
+                indice > 0 ? "border-t border-neutral-300" : ""
+              }`}
+            >
+              <dt className="text-[11px] font-semibold uppercase tracking-[0.08em] text-neutral-600">
+                {rotulo}
+              </dt>
+              <dd className="text-sm font-bold">{valor}</dd>
+            </div>
+          ))}
+        </dl>
 
-      <Link href="/">
-        <BotaoSecundario>Ver outros modelos</BotaoSecundario>
-      </Link>
+        <Link href="/">
+          <BotaoSecundario>Ver outros modelos</BotaoSecundario>
+        </Link>
+      </div>
     </div>
   );
 }

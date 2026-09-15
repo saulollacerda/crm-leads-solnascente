@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { sessaoDaRequisicao } from "@/lib/auth/guarda";
 import { criarLead, listarLeads } from "@/lib/leads/repositorio";
 import { errosDe, novoLeadSchema, UNIDADES, type Unidade } from "@/lib/leads/schema";
-import { protocoloDoLead } from "@/lib/leads/protocolo";
 import { ehStatusLead, type StatusLead } from "@/lib/leads/status";
 
 export async function POST(request: Request) {
@@ -26,7 +25,7 @@ export async function POST(request: Request) {
   const lead = await criarLead(resultado.data);
 
   return NextResponse.json(
-    { id: lead.id, protocolo: protocoloDoLead(lead) },
+    { id: lead.id, protocolo: lead.protocolo },
     { status: 201 },
   );
 }

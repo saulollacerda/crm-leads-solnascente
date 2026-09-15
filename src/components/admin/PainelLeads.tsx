@@ -187,6 +187,9 @@ function Detalhe({
 
       <dl className="border-y border-neutral-300">
         {[
+          // É o número que o cliente tem em mãos ao ligar — precisa ser
+          // encontrável por quem atende.
+          ["Protocolo", `#${lead.protocolo}`],
           ["WhatsApp", formatarWhatsapp(lead.whatsapp)],
           ["Modelo de interesse", lead.modeloInteresse],
           ["Unidade", lead.unidade],

@@ -55,6 +55,13 @@ describe("POST /api/leads", () => {
     expect(corpo.protocolo).toMatch(/^SN-\d{4}-\d{4}$/);
   });
 
+  it("devolve o mesmo protocolo que ficou gravado no lead", async () => {
+    const { id, protocolo } = await (await post(envio)).json();
+    const gravado = await prisma.lead.findUniqueOrThrow({ where: { id } });
+
+    expect(gravado.protocolo).toBe(protocolo);
+  });
+
   it("é público — não exige sessão", async () => {
     expect((await post(envio)).status).toBe(201);
   });

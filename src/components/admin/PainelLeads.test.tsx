@@ -10,6 +10,7 @@ vi.mock("next/navigation", () => ({
 
 const lead = (parcial: Partial<Lead> = {}): Lead => ({
   id: "lead-1",
+  protocolo: "SN-2026-0042",
   nome: "Ricardo Menezes",
   whatsapp: "86998124471",
   modeloInteresse: "CG 160 Fan",
@@ -70,6 +71,15 @@ describe("seleção", () => {
 
     expect(screen.getByText("Lead selecionado")).toBeInTheDocument();
     expect(screen.getByText("Canal preferido")).toBeInTheDocument();
+  });
+
+  it("mostra o protocolo que o cliente recebeu", async () => {
+    const user = userEvent.setup();
+    render(<PainelLeads leads={[lead()]} total={1} />);
+
+    await user.click(screen.getByRole("button", { name: /Ricardo Menezes/ }));
+
+    expect(screen.getByText("#SN-2026-0042")).toBeInTheDocument();
   });
 
   it("orienta a selecionar quando nada está selecionado", () => {
