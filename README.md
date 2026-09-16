@@ -22,47 +22,129 @@ Cada lead recebe um **protocolo** (`SN-2026-0001`) gerado por sequência do Post
 
 ## Rodar localmente
 
-**Pré-requisitos:** Docker (com Compose) e Node.js 20+.
+**Só é preciso instalar o Docker.** Node.js, Prisma e o banco de dados rodam dentro dos containers, e as migrations são aplicadas sozinhas ao subir. Node.js na máquina só é necessário para quem for desenvolver — ver [Para quem vai desenvolver](#para-quem-vai-desenvolver).
+
+### 1. Instalar o Docker (uma vez por máquina)
+
+| Sistema | Como instalar |
+|---|---|
+| **macOS** | Baixe o [Docker Desktop](https://www.docker.com/products/docker-desktop/) para o seu chip (Apple ou Intel), arraste para Aplicativos e abra uma vez |
+| **Windows 10/11** | Baixe o [Docker Desktop](https://www.docker.com/products/docker-desktop/) e instale. Se ele pedir para ativar o **WSL 2**, aceite e reinicie o computador |
+| **Linux** | Instale o Docker Engine com o plugin Compose pelo [guia oficial](https://docs.docker.com/engine/install/) da sua distribuição |
+
+Os comandos a seguir são digitados num terminal: **Terminal** no macOS (Cmd + Espaço, "Terminal"), **PowerShell** no Windows (menu Iniciar). Para conferir a instalação:
 
 ```bash
-cp .env.example .env
+docker --version
+docker compose version
+```
+
+Os dois precisam mostrar um número de versão. No macOS e no Windows, **o Docker Desktop precisa estar aberto** sempre que o sistema for usado.
+
+### 2. Baixar o projeto
+
+Com Git:
+
+```bash
+git clone https://github.com/saulollacerda/crm-leads-solnascente.git
+cd crm-leads-solnascente
+```
+
+Sem Git: no GitHub, **Code → Download ZIP**, descompacte e abra o terminal dentro da pasta. No Windows, clique com o botão direito num espaço vazio da pasta e escolha **Abrir no Terminal**; no macOS, digite `cd ` (com espaço) no Terminal, arraste a pasta para a janela e aperte Enter.
+
+### 3. Criar o arquivo de configuração
+
+```bash
+cp .env.example .env              # macOS e Linux
+Copy-Item .env.example .env       # Windows (PowerShell)
+```
+
+Os valores do exemplo já funcionam localmente; não é preciso editar nada.
+
+### 4. Subir o sistema
+
+```bash
 docker compose up --build
 ```
 
-Sobe dois containers: a aplicação Next.js em `http://localhost:3000` e o Postgres em `localhost:5432`.
+Na primeira vez leva alguns minutos: o Docker baixa as imagens e instala as dependências. Em seguida, sem nenhum outro comando, ele cria o banco, aplica as migrations, prepara o banco dos testes e inicia a aplicação. **Está pronto quando aparecer `✓ Ready`** no terminal.
 
-Na primeira vez (ou depois de alterar `prisma/schema.prisma`), com o banco no ar, aplique as migrations a partir da máquina:
+Deixe esse terminal aberto: é ele que mantém o sistema no ar.
+
+### 5. Usar
+
+| Endereço | O que é |
+|---|---|
+| `http://localhost:3000` | Site público, com o formulário de interesse |
+| `http://localhost:3000/admin` | Painel da equipe — usuário `admin`, senha `changeme` |
+
+Roteiro de um minuto para confirmar que tudo funciona:
+
+1. No site, preencha o formulário e clique em **Quero falar com um especialista** → aparece o protocolo `SN-2026-0001`.
+2. No painel, entre com `admin` / `changeme` → o lead aparece na lista como **Novo**.
+3. Abra o lead e clique em **Marcar como Em contato**, depois em **Marcar como Convertido**.
+
+A primeira abertura de cada página demora alguns segundos: em modo de desenvolvimento, ela é compilada na hora.
+
+### Dia a dia
+
+| Para | Comando |
+|---|---|
+| Desligar, mantendo os leads | `Ctrl + C` no terminal do passo 4 (ou `docker compose stop` em outro) |
+| Ligar de novo | `docker compose up` |
+| Ligar sem prender o terminal | `docker compose up -d` |
+| Ver o que está acontecendo | `docker compose logs -f app` |
+| Atualizar depois de baixar uma versão nova | `docker compose up --build` |
+| **Apagar todos os dados** e começar do zero | `docker compose down -v` |
+
+### Rodar os testes
+
+Com o sistema no ar, em outro terminal na pasta do projeto:
 
 ```bash
-npm install          # só na primeira vez, para ter o CLI do Prisma na máquina
-npx prisma migrate dev
+docker compose exec app npm test
 ```
 
-O `DATABASE_URL` do `.env` aponta para `localhost`, então `prisma` e os testes rodam direto na máquina; o container `app` recebe o hostname interno `db` por override no `docker-compose.yml`.
+São **169 testes** de unidade e integração, rodando dentro do container contra um schema de banco separado — os leads que você criou não são tocados. Os testes ponta a ponta (Playwright) abrem um navegador de verdade e por isso rodam na máquina, com Node.js: ver abaixo.
 
-O client do Prisma é gerado dentro do container a cada start, num diretório fora do bind mount: o engine é específico do sistema operacional, e o que o `prisma generate` do host produz (macOS ou Windows) não roda no container.
+### Problemas comuns
 
-Para entrar no painel, use `ADMIN_USERNAME` / `ADMIN_PASSWORD` do `.env` (por padrão `admin` / `changeme`) em `http://localhost:3000/admin`.
+| Mensagem | O que fazer |
+|---|---|
+| `docker: command not found` ou `Cannot connect to the Docker daemon` | O Docker não está instalado ou o Docker Desktop não está aberto |
+| `port is already allocated` ou `address already in use` | Outro programa está usando a porta 3000 ou a 5432 (outro Postgres, outro projeto). Feche-o, ou troque o número **da esquerda** em `ports` no `docker-compose.yml` — com `"3001:3000"`, o site passa a ser `http://localhost:3001` |
+| O site não abre logo depois do `up` | Espere o `✓ Ready` aparecer no terminal |
 
-### Sem Docker para a aplicação
+### Para quem vai desenvolver
 
-Se preferir rodar o Next na máquina e usar o Docker só para o banco:
+Instale o **Node.js 20 ou mais novo** — instalador LTS em [nodejs.org](https://nodejs.org), `brew install node@20` no macOS, ou [nvm](https://github.com/nvm-sh/nvm) — e as dependências na máquina, para o editor, o CLI do Prisma e os testes E2E:
+
+```bash
+npm install
+```
+
+O `.env` aponta para `localhost:5432`, onde o container do banco fica exposto, então os comandos abaixo rodam direto na máquina com o sistema no ar.
+
+**Alterar o banco:** edite `prisma/schema.prisma` e gere a migration com `npx prisma migrate dev`. Depois, `docker compose restart app` aplica a migration também no schema dos testes.
+
+**Testes ponta a ponta:**
+
+```bash
+npx playwright install chromium   # uma vez por máquina
+npm run test:e2e                  # 20 testes, desktop e mobile
+```
+
+O Playwright usa a aplicação que estiver no ar em `http://localhost:3000`; se não houver nenhuma, sobe o `npm run dev` sozinho. Para apontar para outro endereço, use `E2E_BASE_URL`.
+
+**Rodar a aplicação na máquina em vez do container** (útil para depurar): suba só o banco e rode o Next direto.
 
 ```bash
 docker compose up -d db
-npm install
 npx prisma migrate dev
 npm run dev
 ```
 
-### Testes
-
-```bash
-npm test          # unidade + integração (Vitest) — 169 testes
-npm run test:e2e  # fluxos ponta a ponta (Playwright, desktop e mobile)
-```
-
-Os testes de integração usam o schema `test` do mesmo Postgres, isolado dos dados de desenvolvimento. Na primeira vez, e sempre que criar uma migration, aplique-a lá também — **as duas variáveis**, porque o `migrate` usa a `DIRECT_URL`:
+Nesse modo o container `app` não sobe, então o schema dos testes não é atualizado sozinho. Para rodar `npm test` na máquina, aplique as migrations nele — **as duas variáveis**, porque o `migrate` usa a `DIRECT_URL`:
 
 ```bash
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/crm_leads?schema=test" \
@@ -70,13 +152,7 @@ DIRECT_URL="postgresql://postgres:postgres@localhost:5432/crm_leads?schema=test"
 npx prisma migrate deploy
 ```
 
-Antes do primeiro `test:e2e`, instale o navegador do Playwright (uma vez por máquina):
-
-```bash
-npx playwright install chromium
-```
-
-O Playwright sobe o `npm run dev` sozinho; para apontar para outro ambiente, use `E2E_BASE_URL`.
+> O client do Prisma dentro do container é gerado a cada start, num diretório fora do volume compartilhado com a máquina: o engine do Prisma é específico do sistema operacional, e o gerado no macOS ou no Windows não roda no Linux do container.
 
 ## Variáveis de ambiente
 

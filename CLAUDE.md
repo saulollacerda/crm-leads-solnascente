@@ -47,17 +47,19 @@ docker compose up --build
 ```
 
 - App em `http://localhost:3000`, Postgres exposto em `localhost:5432`.
+- Só o Docker é pré-requisito para rodar: ao subir, o container `app` aplica as migrations no schema `public` e no `test`, gera o client do Prisma e inicia o `next dev` (ver o `command` no `docker-compose.yml`). Node na máquina é só para desenvolver.
 - O `DATABASE_URL` do `.env` aponta para `localhost`, então `prisma` e os testes rodam direto na máquina. O container `app` recebe o hostname interno `db` por override no `docker-compose.yml`.
-- Primeira vez (ou após alterar `schema.prisma`): `npx prisma migrate dev`.
+- Após alterar `schema.prisma`: `npx prisma migrate dev` na máquina, depois `docker compose restart app` para aplicar no schema de teste.
 
 ### Testes
 
 ```bash
 npm test          # unidade + integração (Vitest)
 npm run test:e2e  # fluxos ponta a ponta (Playwright)
+docker compose exec app npm test   # unidade + integração sem Node na máquina
 ```
 
-Os testes de integração usam o schema `test` do mesmo Postgres — isolado dos dados de desenvolvimento. Ao criar uma migration, aplicá-la lá também:
+Os testes de integração usam o schema `test` do mesmo Postgres — isolado dos dados de desenvolvimento. O container `app` mantém esse schema migrado a cada start; rodando o Next fora do container, aplicar a migration lá à mão:
 
 ```bash
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/crm_leads?schema=test" \

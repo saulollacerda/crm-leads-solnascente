@@ -9,6 +9,6 @@ COPY . .
 
 EXPOSE 3000
 
-# O client do Prisma é gerado a cada start: o engine é específico do sistema,
-# e o que existe no host (macOS/Windows) não roda no container (linux).
-CMD ["sh", "-c", "npx prisma generate && npm run dev"]
+# O que roda ao subir (migrations, client do Prisma, next dev) está no
+# `command` do docker-compose.yml, junto das variáveis de que depende.
+CMD ["npm", "run", "dev"]

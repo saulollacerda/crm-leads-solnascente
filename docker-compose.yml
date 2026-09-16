@@ -9,6 +9,20 @@ services:
       # Dentro da rede do Compose o Postgres atende por `db`, não por localhost.
       DATABASE_URL: postgresql://postgres:postgres@db:5432/crm_leads?schema=public
       DIRECT_URL: postgresql://postgres:postgres@db:5432/crm_leads?schema=public
+      # Schema isolado dos testes, para `docker compose exec app npm test`.
+      TEST_DATABASE_URL: postgresql://postgres:postgres@db:5432/crm_leads?schema=test
+    # Quem roda o projeto só precisa do Docker: Node e Prisma vêm na imagem, e
+    # tudo que antes exigia comando na máquina acontece aqui ao subir.
+    #  1. migrations nos dados de dev e no schema dos testes (idempotente:
+    #     sem migration pendente, não faz nada);
+    #  2. client do Prisma gerado para o sistema do container (linux), já que o
+    #     engine gerado no host (macOS/Windows) não roda aqui;
+    #  3. next dev.
+    command: >
+      sh -c "npx prisma migrate deploy
+      && DATABASE_URL=$$TEST_DATABASE_URL DIRECT_URL=$$TEST_DATABASE_URL npx prisma migrate deploy
+      && npx prisma generate
+      && npm run dev"
     depends_on:
       db:
         condition: service_healthy
