@@ -182,7 +182,7 @@ São **duas guardas, uma por superfície**: `src/proxy.ts` protege as páginas d
 
 **Por quê não NextAuth:** dependência e modelo mental grandes para autenticar um único usuário, que é exatamente o escopo que o PRD definiu para a v1. Token em `localStorage` foi descartado por ficar legível a qualquer XSS.
 
-**Custo:** trocar a senha exige redeploy, não há trilha de auditoria por pessoa e não há revogação de sessão individual. É o primeiro item a mudar antes de uso real.
+**Custo:** trocar a senha exige redeploy, não há trilha de auditoria por pessoa e não há revogação de sessão individual. Adequado para uma equipe de duas unidades compartilhando um acesso; com mais vendedores, o caminho é uma tabela de usuários com papéis.
 
 ### Painel em `/admin` (path-based), não em subdomínio
 
@@ -216,42 +216,54 @@ O design final inclui "Prefiro ser contatado por" (WhatsApp / Telefone / E-mail)
 
 # O que faria para produção
 
-O que existe hoje atende ao PRD e ao prazo. Esta lista é o que mudaria **antes** de a concessionária usar o sistema de verdade.
+O que existe hoje atende ao PRD e ao prazo. Abaixo, só o essencial: as cinco mudanças que separam a demonstração de um sistema que a concessionária usa no dia a dia.
 
-### Bloqueantes
+### 1. Domínio próprio
 
-- **Preços e parcelas reais.** Os valores de hoje são ilustrativos. Publicar preço errado de moto é problema comercial e jurídico, não detalhe de conteúdo.
-- **Usuários reais com papéis** no lugar da credencial única: tabela de usuários com hash de senha (argon2/bcrypt), sessão revogável e distinção entre vendedor e gestor. Hoje não há como saber *quem* moveu um lead — é pré-requisito de qualquer auditoria.
-- **Rate limit e anti-spam no `POST /api/leads`.** O endpoint é público por definição e escreve no banco: sem limite, é um formulário aberto para flood. Rate limit por IP mais honeypot ou Turnstile, preferindo mecanismos invisíveis a CAPTCHA, que custa conversão.
-- **Política de privacidade publicada** e vinculada no formulário, com procedimento para atender pedido de exclusão ou de acesso pelo titular.
-- **RLS conferido em toda tabela com dado pessoal.** Mesmo sem usar o SDK, o Supabase publica as tabelas do schema `public` numa API REST acessível com a chave publicável. O RLS da tabela `leads` está ligado e sem policy permissiva (verificado com dado real: leitura anônima devolve vazio, escrita é recusada) — qualquer migration futura precisa repetir essa checagem.
+- Apontar um domínio da empresa (ex.: `crm.solnascentemotos.com.br`) para a Vercel, com SSL automático. A URL gerada pela plataforma serve para avaliação e é ruim para um link que vai em anúncio e conversa de WhatsApp.
+- Com o domínio, o painel vai para subdomínio próprio (`admin.`): o cookie de sessão fica isolado por origem, resolvendo o custo registrado na decisão do [painel em `/admin`](#painel-em-admin-path-based-não-em-subdomínio).
 
-### Infraestrutura e operação
+### 2. Pipeline de CI/CD
 
-- **Domínio próprio** (ex.: `crm.solnascentemotos.com.br`), e com ele o painel em `admin.`, resolvendo estruturalmente o compartilhamento de origem do cookie.
-- **Connection pooling** — consequência direta de combinar Supabase com serverless: cada função abrindo a própria conexão esgota o limite do Postgres sob carga concorrente.
-- **Observabilidade:** Sentry e logs estruturados (sem PII). Hoje uma falha no `POST /api/leads` só aparece se alguém estiver olhando o painel da Vercel — ou seja, um lead pode ser perdido em silêncio.
-- **CI como gate de merge** rodando a suíte completa, com `prisma migrate deploy` no pipeline — nunca migration aplicada à mão.
-- **Staging com banco próprio**, para validar migration antes de produção.
-- **Restore testado**, não apenas backup configurado. Backup que nunca foi restaurado é uma suposição.
-- **Rotação de `SESSION_SECRET`** e das credenciais, com o procedimento documentado.
+- **CI a cada pull request** (GitHub Actions): lint, checagem de tipos, `npm test` contra um Postgres em container do próprio pipeline e `npm run test:e2e`. Merge só com tudo verde — a suíte do TDD já existe, falta torná-la obrigatória.
+- **CD pela Vercel**: preview automático por PR e produção só a partir da `main` aprovada.
+- **Migrations dentro do pipeline**: `prisma migrate deploy` como etapa antes do deploy, primeiro num staging com banco próprio. Nunca migration aplicada à mão em produção.
 
-### Dados e produto
+### 3. Preços e imagens reais, vindos do estoque
 
-- **Tabela `LeadEvent`** para histórico real. O painel mostra "Histórico" derivado de `createdAt`/`updatedAt`, o que só consegue contar a primeira e a última coisa que aconteceram. Cada transição gravando um evento (quem, quando, de qual status para qual) resolve isso e habilita auditoria.
-- **Paginação server-side.** A listagem atual carrega tudo: aceitável com dezenas de leads, insustentável com milhares. Os índices em `status`, `unidade` e `createdAt` já existem.
-- **Atribuição de lead a vendedor e SLA de primeiro contato** — o valor operacional real está em saber qual lead `Novo` está parado há tempo demais.
-- **Métricas de conversão** por unidade, modelo e período. O PRD tira relatórios da v1, mas é a primeira pergunta que a gestão faz depois do primeiro mês.
+- **Bloqueante para uso real:** os preços e parcelas de hoje são ilustrativos. Publicar preço errado de moto é problema comercial e jurídico, não detalhe de conteúdo.
+- Sincronização com o ERP/DMS da concessionária — modelos, preços, parcelas, disponibilidade e fotos por modelo e cor — por job periódico com cache. Estoque de motos não muda por minuto.
+- O ponto de troca já existe: as telas só leem o catálogo por `listarModelos()` / `buscarModelo(slug)`, então muda a implementação dessas funções e nenhuma tela.
+- Com o catálogo real, `modeloInteresse` deixa de ser texto e passa a referenciar um `modeloId`. É o que torna confiável qualquer relatório por modelo.
 
-### Integrações
+### 4. Separação em dois serviços: backend e frontend
 
-- **WhatsApp (Meta Cloud API).** É o canal real da concessionária, e o formulário promete que "um especialista entra em contato". Três usos, em ordem de valor: confirmação imediata ao lead, alerta ao vendedor da unidade e aviso nas mudanças de status. Requisitos que não são opcionais: número verificado, templates aprovados pela Meta para mensagens fora da janela de 24h e webhook de status de entrega. **Com fila e retry, nunca envio síncrono** — disparar dentro do `POST /api/leads` acopla a captação à disponibilidade da API da Meta, e um timeout deles vira um lead perdido aqui.
-- **Estoque (ERP/DMS)** no lugar do catálogo estático: modelos, preços, parcelas, disponibilidade e fotos, por job periódico com cache. O ponto de troca já existe por construção. Com o catálogo real, `modeloInteresse` deixa de ser texto livre e passa a referenciar um `modeloId` — hoje "CG 160 Fan" e "CG 160 FAN" seriam dois modelos distintos em um `GROUP BY`.
-- **Separação em dois serviços** (backend Node dedicado + Next só na apresentação) quando entrar o primeiro consumidor além do próprio front, ou o primeiro processamento assíncrono — na prática, junto com uma das integrações acima. Antes disso, é custo sem retorno.
+- **Backend Node.js dedicado** (Fastify ou NestJS), dono do Prisma, do schema e das regras de negócio, expondo a API. O Next.js fica só com a apresentação — landing e painel — consumindo essa API.
+- **O que destrava:** um processo de longa duração comporta o que o serverless não comporta bem — worker de fila para o WhatsApp e o chatbot, job de sincronização do estoque, conexão persistente com o banco — e abre a API para outros consumidores.
+- **O que passa a custar:** CORS e autenticação entre domínios, contrato de tipos explícito (OpenAPI ou pacote compartilhado) e dois deploys.
+- **Quando fazer:** junto com o item 5, que é o primeiro processamento assíncrono. Antes disso é custo sem retorno. A extração é barata porque a regra de negócio já vive em `src/lib/` e os route handlers são casca fina.
 
-### Conteúdo
+### 5. Integração com WhatsApp e qualificação por chatbot
 
-As fotos dos modelos e a logo já são os arquivos oficiais, servidos por `next/image`
-(`public/motos/` e `public/marca/` — soltar um arquivo com o nome certo troca a imagem
-sem mexer em código). Falta, além dos preços já citados como bloqueante, e-mail
-transacional no domínio da empresa.
+O canal real da concessionária é o WhatsApp, e hoje o primeiro contato é inteiramente manual. A proposta é automatizar do interesse até a proposta, deixando para o vendedor a fila já ordenada por quem está pronto para comprar:
+
+![Fluxo de qualificação: o cliente envia o interesse, a automação envia mensagem pelo WhatsApp, o chatbot faz perguntas e classifica o lead como quente, morno ou frio, o resultado é gravado na base de dados e vira uma proposta personalizada](docs/img/fluxo-qualificacao-whatsapp.svg)
+
+1. **O cliente envia o interesse** pelo formulário — é o que já existe hoje.
+2. **A automação envia a mensagem** pela Meta WhatsApp Cloud API, com template aprovado, e avisa o vendedor da unidade. O envio vai para uma **fila com retry**, nunca dentro do `POST /api/leads`: um timeout da Meta não pode virar lead perdido.
+3. **O chatbot faz as perguntas** que o vendedor faria na primeira ligação: prazo de compra, forma de pagamento, entrada, moto na troca e CNH. Ele se identifica como bot, e qualquer dúvida fora do roteiro passa a conversa para um humano.
+4. **O lead é classificado** por temperatura:
+
+   | Temperatura | Critério inicial |
+   |---|---|
+   | **Quente** | Compra em até 30 dias, com forma de pagamento definida |
+   | **Morno** | Compra em 1 a 3 meses, ou pagamento ainda indefinido |
+   | **Frio** | Sem prazo definido, só pesquisando |
+
+5. **O resultado vai para a base de dados** como campos estruturados do lead, não como texto — é o que permite ordenar a fila, filtrar o painel e medir conversão por faixa.
+6. **Sai a proposta completa e personalizada**, com preço, entrada e parcelas vindos do estoque (item 3), nunca gerados pelo bot. O vendedor revisa antes de enviar.
+
+Duas condições para ligar isso com lead real:
+
+- **LGPD:** o consentimento atual autoriza "contato comercial", o que não cobre classificação automatizada. É preciso um novo texto e um novo aceite — o sistema já grava a versão aceita justamente para isso. O `canalPreferido` também passa a valer: quem escolheu telefone ou e-mail não recebe automação de WhatsApp.
+- **Medir antes de confiar:** comparar a conversão da fila ordenada por temperatura com a da ordem de chegada. Se a classificação não melhorar a conversão, ela só adiciona uma camada de erro entre o lead e o vendedor.

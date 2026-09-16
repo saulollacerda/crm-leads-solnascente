@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="600" viewBox="0 0 960 600" role="img" aria-labelledby="titulo desc">
+  <title id="titulo">Qualificação automática do lead via WhatsApp</title>
+  <desc id="desc">O cliente envia o interesse pelo site; uma automação envia mensagem pelo WhatsApp; um chatbot faz perguntas e classifica o lead como quente, morno ou frio; o resultado é gravado no CRM; e a partir dele é montada uma proposta completa e personalizada.</desc>
+  <style>
+    text { font-family: Archivo, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #201e1d; }
+    .titulo { font-size: 24px; font-weight: 700; }
+    .subtitulo { font-size: 14px; fill: #605d5d; }
+    .card { fill: #ffffff; stroke: #bab6b6; stroke-width: 1; }
+    .num { fill: #cc0000; }
+    .num-txt { font-size: 14px; font-weight: 700; fill: #ffffff; }
+    .card-titulo { font-size: 16px; font-weight: 700; }
+    .corpo { font-size: 13px; fill: #444141; }
+    .tag { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; fill: #2e7d32; }
+    .chip-rotulo { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; fill: #ffffff; }
+    .chip-sub { font-size: 11.5px; fill: #ffffff; }
+    .seta { stroke: #201e1d; stroke-width: 1.5; fill: none; }
+    .rodape { font-size: 12px; fill: #7d7979; }
+  </style>
+  <defs>
+    <marker id="ponta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#201e1d"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="600" fill="#f3f2f2"/>
+  <rect width="960" height="4" fill="#cc0000"/>
+
+  <text class="titulo" x="40" y="52">Qualificação automática do lead</text>
+  <text class="subtitulo" x="40" y="78">Do interesse no site à proposta personalizada — fluxo proposto para produção</text>
+
+  <!-- Linha 1: esquerda para a direita -->
+  <g transform="translate(40 112)">
+    <rect class="card" width="264" height="150"/>
+    <circle class="num" cx="28" cy="30" r="14"/>
+    <text class="num-txt" x="28" y="35" text-anchor="middle">1</text>
+    <text class="card-titulo" x="52" y="36">Cliente envia o interesse</text>
+    <text class="corpo" x="24" y="68">Formulário do site: modelo,</text>
+    <text class="corpo" x="24" y="87">unidade e WhatsApp.</text>
+    <text class="corpo" x="24" y="106">O lead nasce como Novo.</text>
+    <text class="tag" x="24" y="134">✓ JÁ EXISTE HOJE</text>
+  </g>
+
+  <line class="seta" x1="306" y1="187" x2="344" y2="187" marker-end="url(#ponta)"/>
+
+  <g transform="translate(348 112)">
+    <rect class="card" width="264" height="150"/>
+    <circle class="num" cx="28" cy="30" r="14"/>
+    <text class="num-txt" x="28" y="35" text-anchor="middle">2</text>
+    <text class="card-titulo" x="52" y="36">Automação no WhatsApp</text>
+    <text class="corpo" x="24" y="68">Mensagem em segundos, por</text>
+    <text class="corpo" x="24" y="87">template aprovado pela Meta.</text>
+    <text class="corpo" x="24" y="106">O vendedor da unidade</text>
+    <text class="corpo" x="24" y="125">é avisado ao mesmo tempo.</text>
+  </g>
+
+  <line class="seta" x1="614" y1="187" x2="652" y2="187" marker-end="url(#ponta)"/>
+
+  <g transform="translate(656 112)">
+    <rect class="card" width="264" height="150"/>
+    <circle class="num" cx="28" cy="30" r="14"/>
+    <text class="num-txt" x="28" y="35" text-anchor="middle">3</text>
+    <text class="card-titulo" x="52" y="36">Chatbot faz perguntas</text>
+    <text class="corpo" x="24" y="68">• Prazo de compra</text>
+    <text class="corpo" x="24" y="87">• Pagamento e entrada</text>
+    <text class="corpo" x="24" y="106">• Moto na troca e CNH</text>
+    <text class="corpo" x="24" y="125">Humano assume se preciso.</text>
+  </g>
+
+  <!-- Descida para a linha 2 -->
+  <line class="seta" x1="788" y1="264" x2="788" y2="316" marker-end="url(#ponta)"/>
+
+  <!-- Linha 2: direita para a esquerda -->
+  <g transform="translate(656 320)">
+    <rect class="card" width="264" height="190"/>
+    <circle class="num" cx="28" cy="30" r="14"/>
+    <text class="num-txt" x="28" y="35" text-anchor="middle">4</text>
+    <text class="card-titulo" x="52" y="36">Classifica o lead</text>
+
+    <rect x="24" y="58" width="216" height="36" rx="4" fill="#cc0000"/>
+    <text class="chip-rotulo" x="38" y="80">QUENTE</text>
+    <text class="chip-sub" x="228" y="80" text-anchor="end">compra em até 30 dias</text>
+
+    <rect x="24" y="102" width="216" height="36" rx="4" fill="#b45309"/>
+    <text class="chip-rotulo" x="38" y="124">MORNO</text>
+    <text class="chip-sub" x="228" y="124" text-anchor="end">compra em 1 a 3 meses</text>
+
+    <rect x="24" y="146" width="216" height="36" rx="4" fill="#2f6690"/>
+    <text class="chip-rotulo" x="38" y="168">FRIO</text>
+    <text class="chip-sub" x="228" y="168" text-anchor="end">sem prazo definido</text>
+  </g>
+
+  <line class="seta" x1="654" y1="415" x2="616" y2="415" marker-end="url(#ponta)"/>
+
+  <g transform="translate(348 320)">
+    <rect class="card" width="264" height="190"/>
+    <circle class="num" cx="28" cy="30" r="14"/>
+    <text class="num-txt" x="28" y="35" text-anchor="middle">5</text>
+    <text class="card-titulo" x="52" y="36">Grava na base de dados</text>
+    <text class="corpo" x="24" y="68">Temperatura e respostas viram</text>
+    <text class="corpo" x="24" y="87">campos do lead, não texto solto.</text>
+    <text class="corpo" x="24" y="119">O painel ordena a fila:</text>
+    <text class="corpo" x="24" y="138">quentes primeiro.</text>
+  </g>
+
+  <line class="seta" x1="346" y1="415" x2="308" y2="415" marker-end="url(#ponta)"/>
+
+  <g transform="translate(40 320)">
+    <rect class="card" width="264" height="190"/>
+    <circle class="num" cx="28" cy="30" r="14"/>
+    <text class="num-txt" x="28" y="35" text-anchor="middle">6</text>
+    <text class="card-titulo" x="52" y="36">Proposta personalizada</text>
+    <text class="corpo" x="24" y="68">Completa: preço, entrada e</text>
+    <text class="corpo" x="24" y="87">parcelas vindos do estoque,</text>
+    <text class="corpo" x="24" y="106">nunca inventados pelo bot.</text>
+    <text class="corpo" x="24" y="138">O vendedor revisa e envia</text>
+    <text class="corpo" x="24" y="157">pelo WhatsApp.</text>
+  </g>
+
+  <text class="rodape" x="40" y="552">A etapa 1 já existe; da 2 à 6 é a evolução para produção.</text>
+  <text class="rodape" x="40" y="572">Os critérios de temperatura são o ponto de partida — calibrados depois pela conversão real de cada faixa.</text>
+</svg>
