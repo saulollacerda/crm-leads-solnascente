@@ -114,6 +114,7 @@ São **169 testes** de unidade e integração, rodando dentro do container contr
 | `docker: command not found` ou `Cannot connect to the Docker daemon` | O Docker não está instalado ou o Docker Desktop não está aberto |
 | `port is already allocated` ou `address already in use` | Outro programa está usando a porta 3000 ou a 5432 (outro Postgres, outro projeto). Feche-o, ou troque o número **da esquerda** em `ports` no `docker-compose.yml` — com `"3001:3000"`, o site passa a ser `http://localhost:3001` |
 | O site não abre logo depois do `up` | Espere o `✓ Ready` aparecer no terminal |
+| Testes falham com `Can't reach database server at localhost:5432` ou `TEST_DATABASE_URL não está definida` | O container foi criado por uma versão anterior do projeto (por exemplo, antes de um `git pull`). Recrie com `docker compose up --build` e rode os testes de novo |
 
 ### Para quem vai desenvolver
 
